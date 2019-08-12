@@ -1553,6 +1553,9 @@ class PGCompiler(compiler.SQLCompiler):
     def visit_array(self, element, **kw):
         return "ARRAY[%s]" % self.visit_clauselist(element, **kw)
 
+    def visit_array_from_select(self, element, **kw):
+        return "ARRAY(%s)" % self.visit_clauselist(element, **kw)
+
     def visit_slice(self, element, **kw):
         return "%s:%s" % (
             self.process(element.start, **kw),

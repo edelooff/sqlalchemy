@@ -97,10 +97,14 @@ class array(expression.Tuple):
 
     """
 
-    __visit_name__ = "array"
-
     def __init__(self, clauses, **kw):
-        super(array, self).__init__(*clauses, **kw)
+        if isinstance(clauses, expression.Selectable):
+            self.from_select = True
+            super(array, self).__init__(clauses, **kw)
+        else:
+            self.from_select = False
+            super(array, self).__init__(*clauses, **kw)
+
         if isinstance(self.type, ARRAY):
             self.type = ARRAY(
                 self.type.item_type,
@@ -140,6 +144,14 @@ class array(expression.Tuple):
             return expression.Grouping(self)
         else:
             return self
+
+    def __visit_name__(self):
+        if self.from_select:
+            return "array_from_select"
+        else:
+            return "array"
+
+    __visit_name__ = property(__visit_name__)
 
 
 CONTAINS = operators.custom_op("@>", precedence=5)
