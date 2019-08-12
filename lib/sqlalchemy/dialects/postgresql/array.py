@@ -221,12 +221,16 @@ class ARRAY(sqltypes.ARRAY):
             """Boolean expression.  Test if elements are a superset of the
             elements of the argument array expression.
             """
+            if isinstance(other, expression.Selectable):
+                other = array(other)
             return self.operate(CONTAINS, other, result_type=sqltypes.Boolean)
 
         def contained_by(self, other):
             """Boolean expression.  Test if elements are a proper subset of the
             elements of the argument array expression.
             """
+            if isinstance(other, expression.Selectable):
+                other = array(other)
             return self.operate(
                 CONTAINED_BY, other, result_type=sqltypes.Boolean
             )
